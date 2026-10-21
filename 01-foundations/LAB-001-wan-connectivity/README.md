@@ -131,3 +131,12 @@ Configurar `172.16.255.2/30` en Gi0/0/1 tras confirmar el cable hacia RB4011 eth
 ### Prueba de cierre pendiente
 
 En Cisco: `ping 172.16.255.1`, `show arp`; después, una vez validado el vecino, configurar ruta por defecto de forma controlada y evaluar conectividad externa.
+
+## Verificación posterior a corrección física — 21 octubre 2026
+
+**Conectividad de tránsito IPv4 confirmada** entre Cisco ISR 4451 Gi0/0/1 (`172.16.255.2/30`) y RB4011 (`172.16.255.1/30`).
+
+- `ping 172.16.255.1 repeat 5`: `.!!!!` — 4/5 respuestas (80 %), RTT mínimo/promedio/máximo: 1/1/1 ms.
+- `show arp`: vecino `172.16.255.1` resuelto en Gi0/0/1, entrada ARPA; se omitió la MAC física en documentación pública.
+- Interpretación: la primera pérdida podría corresponder a resolución inicial de ARP, pero no está demostrada causalmente. Repetir prueba con 20 ecos.
+- Estado: **enlace de tránsito L3 validado; conectividad a Internet y aislamiento extremo a extremo pendientes**.
