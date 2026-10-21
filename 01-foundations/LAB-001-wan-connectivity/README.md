@@ -117,3 +117,17 @@ Configurar `172.16.255.2/30` en Gi0/0/1 tras confirmar el cable hacia RB4011 eth
 - No hay gateway de último recurso (esperado en esta etapa).
 
 **Diagnóstico abierto:** la dirección IP y la ruta conectada del Cisco se instalaron bien. Confirmar la entrada ARP **después del ping**, el estado del puerto RB4011 y si el cable corresponde a ether6; revisar firewall `input` si ARP resuelve pero ICMP no responde. No agregar NAT, rutas estáticas ni excepciones de firewall hasta aislar el problema.
+
+## Incidente INC-001 — Cable conectado al puerto equivocado
+
+**Causa raíz identificada por el operador:** el cable Ethernet se encontraba conectado al puerto físico incorrecto. Se corrigió la conexión física.
+
+**Síntoma previo:** Gi0/0/1 figuraba `up/up`, la dirección `172.16.255.2/30` y las rutas conectadas eran correctas, pero `ping 172.16.255.1` fallaba (0/5).
+
+**Aprendizaje:** `up/up` confirma enlace Ethernet con *algún* dispositivo, no identidad ni conectividad con el vecino pretendido. Confirmar correspondencia de puertos de extremo a extremo mediante etiquetado, revisión física y LLDP/CDP si está disponible.
+
+**Estado del incidente:** causa física identificada y cableado corregido según reporte; **pendiente de adjuntar salida de nuevo ping y tabla ARP** para registrar validación L3. No se aplicaron cambios de NAT/routing para resolver la causa física.
+
+### Prueba de cierre pendiente
+
+En Cisco: `ping 172.16.255.1`, `show arp`; después, una vez validado el vecino, configurar ruta por defecto de forma controlada y evaluar conectividad externa.
