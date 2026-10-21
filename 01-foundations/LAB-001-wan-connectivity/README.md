@@ -103,3 +103,17 @@ Salida CLI recibida y sintetizada sin datos de identificación física:
 ### Próxima configuración controlada (no ejecutada)
 
 Configurar `172.16.255.2/30` en Gi0/0/1 tras confirmar el cable hacia RB4011 ether6, verificar la ruta conectada `C 172.16.255.0/30` y ruta local `L 172.16.255.2/32`, probar ping a `172.16.255.1`. Después, añadir ruta por defecto estática al gateway y probar salida. No guardar permanentemente hasta validar.
+
+## Primer intento de conectividad L3 — 21 octubre 2026
+
+**Configurado en ISR Gi0/0/1:** `description WAN_TO_ZN-LAB-UPSTREAM-RTR01`, `ip address 172.16.255.2 255.255.255.252`, `no shutdown`.
+
+**Resultados observados:**
+
+- `show ip interface brief`: `GigabitEthernet0/0/1 172.16.255.2 manual up/up`.
+- `show ip route connected`: `C 172.16.255.0/30` y `L 172.16.255.2/32`, ambas vía Gi0/0/1.
+- `show arp`: solo dirección propia `172.16.255.2`; no hay vecino `172.16.255.1` en la salida capturada **antes del ping**.
+- `ping 172.16.255.1`: **0/5 respuestas**.
+- No hay gateway de último recurso (esperado en esta etapa).
+
+**Diagnóstico abierto:** la dirección IP y la ruta conectada del Cisco se instalaron bien. Confirmar la entrada ARP **después del ping**, el estado del puerto RB4011 y si el cable corresponde a ether6; revisar firewall `input` si ARP resuelve pero ICMP no responde. No agregar NAT, rutas estáticas ni excepciones de firewall hasta aislar el problema.
