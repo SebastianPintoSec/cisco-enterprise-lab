@@ -53,3 +53,32 @@ Verificar ausencia de solapamientos antes de habilitar nuevas subredes.
 ## Criterio de finalización
 
 Explicación teórica + configuración comentada + resultados de prueba positivos y negativos + diagnóstico y evidencias.
+
+## Cisco ISR 4451-X — Inventario observado (21 octubre 2026)
+
+> Salidas recibidas del CLI. Números de serie y direcciones MAC omitidos deliberadamente.
+
+| Parámetro | Observación |
+|---|---|
+| Chasis | ISR4451-X/K9, revisión V08 |
+| IOS XE | 16.06.04 / IOS 16.6.4 Everest (compilación julio 2018) |
+| Imagen | UNIVERSALK9 |
+| Módulo de puertos | ISR4451-X-4x1GE |
+| Fuente | PWR-4450-AC, 450 W |
+| Interfaces de datos | GigabitEthernet0/0/0 a 0/0/3 |
+| Gestión | GigabitEthernet0 |
+| Interfaz candidata para WAN | GigabitEthernet0/0/1 — up/up, sin IP |
+| Resto de interfaces | down/down, sin IP |
+
+La salida `show ip interface brief` indica que Gi0/0/1 está activa a nivel físico/enlace, pero **aún no confirma** el extremo RB4011 ni el funcionamiento IPv4.
+
+### Próxima comprobación, antes de cambios
+
+- [ ] `enable` y consultar `show interfaces GigabitEthernet0/0/1`.
+- [ ] Consultar `show running-config interface GigabitEthernet0/0/1` y `show ip route`.
+- [ ] Confirmar cable Gi0/0/1 ↔ ether6.
+- [ ] Revisar licencias con `show license summary` o comandos compatibles antes de habilitar funciones avanzadas.
+
+### Seguridad y ciclo de vida
+
+IOS XE 16.6.4 es una versión antigua. Mantener la administración aislada y revisar avisos de seguridad y compatibilidad antes de permitir exposición externa; no asumir que una fecha de fin de soporte del hardware garantiza parches para esta versión.
