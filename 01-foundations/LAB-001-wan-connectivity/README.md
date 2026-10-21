@@ -140,3 +140,20 @@ En Cisco: `ping 172.16.255.1`, `show arp`; después, una vez validado el vecino,
 - `show arp`: vecino `172.16.255.1` resuelto en Gi0/0/1, entrada ARPA; se omitió la MAC física en documentación pública.
 - Interpretación: la primera pérdida podría corresponder a resolución inicial de ARP, pero no está demostrada causalmente. Repetir prueba con 20 ecos.
 - Estado: **enlace de tránsito L3 validado; conectividad a Internet y aislamiento extremo a extremo pendientes**.
+
+## Verificación WAN exitosa — 21 octubre 2026
+
+**Resultados observados en Cisco ISR 4451-X:**
+
+- Ping del gateway `172.16.255.1` con 20 ecos: **20/20 (100%)**, RTT 1/1/1 ms.
+- Se añadió en configuración activa `ip route 0.0.0.0 0.0.0.0 172.16.255.1`.
+- Ping externo `8.8.8.8`: **5/5 (100%)**, RTT min/prom/max 2/3/5 ms.
+- WAN Cisco: `172.16.255.2/30` en Gi0/0/1; gateway RB4011 `172.16.255.1`.
+
+**Conclusión acotada:** conectividad ICMP IPv4 del propio ISR hacia el gateway e Internet validada. No implica aún DNS funcional, VLANs operativas, seguridad integral ni conectividad a Internet de los futuros hosts internos.
+
+**Pendientes:** comprobar `show ip route` para constatar entrada S*, verificar `traceroute 8.8.8.8`, DNS, pruebas negativas hacia redes restringidas, política firewall y persistencia (`startup-config`). Confirmar que la configuración es segura antes de guardar.
+
+### Aprendizaje
+
+La ruta por defecto envía destinos sin ruta más específica a un siguiente salto directamente alcanzable. En esta etapa el origen del ping es la IP WAN del Cisco, incluida en la regla existente de salida del RB4011. Las futuras VLAN internas necesitarán rutas de retorno y políticas explícitas; no extrapolar el éxito actual a esos segmentos.
