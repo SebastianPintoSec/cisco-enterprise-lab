@@ -82,3 +82,24 @@ La salida `show ip interface brief` indica que Gi0/0/1 está activa a nivel fís
 ### Seguridad y ciclo de vida
 
 IOS XE 16.6.4 es una versión antigua. Mantener la administración aislada y revisar avisos de seguridad y compatibilidad antes de permitir exposición externa; no asumir que una fecha de fin de soporte del hardware garantiza parches para esta versión.
+
+## Línea base Cisco — verificación Gi0/0/1 (21 octubre 2026)
+
+Salida CLI recibida y sintetizada sin datos de identificación física:
+
+| Indicador | Resultado |
+|---|---|
+| Gi0/0/1 estado | up/up |
+| Negociación | automática, 1000 Mbps full-duplex, RJ45 |
+| MTU | 1500 bytes |
+| Errores entrada | 0 (incluye CRC, frame, overruns) |
+| Errores salida | 0; output drops 0 |
+| Interface resets | 1 (causa y fecha no determinadas) |
+| Configuración actual | `no ip address`; `negotiation auto` |
+| Tabla de rutas | sin gateway de último recurso y sin rutas IPv4 mostradas |
+
+**Interpretación:** enlace Ethernet negociado correctamente; sin errores de entrada/salida observados. Un reinicio de interfaz acumulado no demuestra por sí mismo fallo físico. Los paquetes multicast recibidos no prueban reachability IPv4. La interfaz no tiene IP, de modo que aún no podemos probar gateway o NAT.
+
+### Próxima configuración controlada (no ejecutada)
+
+Configurar `172.16.255.2/30` en Gi0/0/1 tras confirmar el cable hacia RB4011 ether6, verificar la ruta conectada `C 172.16.255.0/30` y ruta local `L 172.16.255.2/32`, probar ping a `172.16.255.1`. Después, añadir ruta por defecto estática al gateway y probar salida. No guardar permanentemente hasta validar.
