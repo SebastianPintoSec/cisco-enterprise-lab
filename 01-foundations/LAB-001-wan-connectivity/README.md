@@ -157,3 +157,21 @@ En Cisco: `ping 172.16.255.1`, `show arp`; después, una vez validado el vecino,
 ### Aprendizaje
 
 La ruta por defecto envía destinos sin ruta más específica a un siguiente salto directamente alcanzable. En esta etapa el origen del ping es la IP WAN del Cisco, incluida en la regla existente de salida del RB4011. Las futuras VLAN internas necesitarán rutas de retorno y políticas explícitas; no extrapolar el éxito actual a esos segmentos.
+
+## Traceroute y revisión de configuración — 21 octubre 2026
+
+**Ruta externa validada:** `traceroute 8.8.8.8` alcanzó el destino en 15 saltos con RTT final 3/3/3 ms. Primer salto `172.16.255.1` (RB4011); segundo `192.168.1.1` (upstream ISP). Un salto utiliza `100.71.248.1` (rango compartido 100.64.0.0/10); compatible con redes que emplean CGNAT, sin confirmarlo por sí solo. Algunos routers intermedios no respondieron a todas las sondas.
+
+**Running-config sanitizada, observaciones principales:**
+- IOS XE 16.6; imagen de arranque `isr4400-universalk9.16.06.04.SPA.bin`.
+- `GigabitEthernet0/0/1`: `172.16.255.2/30`, descripción `WAN_TO_ZN-LAB-UPSTREAM-RTR01`.
+- Ruta por defecto configurada: `ip route 0.0.0.0 0.0.0.0 172.16.255.1`.
+- `no aaa new-model`: AAA aún sin configurar.
+- `no ip http server` y `ip http secure-server`: HTTPS administrativo habilitado, revisar necesidad/exposición antes de dejarlo activo.
+- `line vty 0 4` con `login`: administración remota requiere hardening deliberado.
+- Puerto dedicado `GigabitEthernet0` en VRF `Mgmt-intf`, sin IP.
+- `platform hardware throughput level 2000000`: valor configurado, no equivale a throughput validado.
+
+**Pendiente del LAB-001:** prueba negativa y aislamiento hacia redes internas; verificación de tabla de rutas actual y configuración persistente. El proyecto no se considera completado aún.
+
+**Confidencialidad:** número de serie y direcciones MAC operativas omitidos del repositorio.
